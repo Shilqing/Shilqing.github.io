@@ -89,10 +89,10 @@ avatar:
 disable_top_img: false
 
 # The banner image of home page
-index_img: https://data-static.netdun.net/Fomalhaut/img/dm11.webp
+index_img:  https://f.pz.al/pzal/2023/06/21/860eec1dfda46.jpg
 
 # If the banner of page not setting, it will show the top_img
-default_top_img: https://source.fomal.cc/img/dm10.webp
+default_top_img:  https://source.fomal.cc/img/default_cover_5.webp
 
 # The banner image of archive page
 archive_img:
