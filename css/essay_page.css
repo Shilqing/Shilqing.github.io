@@ -252,7 +252,7 @@
 /* 顶部样式 */
 .author-content.author-content-item.essayPage {
     height: 19rem;
-    background: url(/img/wechat.webp) left 28% / cover no-repeat;
+    background: url(https://img.june-pj.cn/img/cover.webp) left 28% / cover no-repeat;
     border-radius: 24px;
     border: var(--style-border-always);
     box-shadow: var(--june-shadow-border);
