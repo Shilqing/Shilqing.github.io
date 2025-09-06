@@ -1,0 +1,234 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Dockerfile构建AIGC应用 | Rational</title><meta name="author" content="Rational"><meta name="copyright" content="Rational"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="概述FaceChain是一个可以用来生成个人写真的深度学习模型工具。可实现兼具可控性与ID保持能力的无限风格写真与固定模板写真功能，同时对ControlNet和LoRA具有优秀的兼容能力。FaceChain支持在gradio的界面中使用模型训练和推理能力、支持资深开发者使用python脚本进行训练推理 本篇使用是facechain：v3.0.0版本，为什么会选择这个镜像呢？？因为笔者在构建时包括构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dockerfile构建AIGC应用">
+<meta property="og:url" content="https://shilq.top/posts/30563.html">
+<meta property="og:site_name" content="Rational">
+<meta property="og:description" content="概述FaceChain是一个可以用来生成个人写真的深度学习模型工具。可实现兼具可控性与ID保持能力的无限风格写真与固定模板写真功能，同时对ControlNet和LoRA具有优秀的兼容能力。FaceChain支持在gradio的界面中使用模型训练和推理能力、支持资深开发者使用python脚本进行训练推理 本篇使用是facechain：v3.0.0版本，为什么会选择这个镜像呢？？因为笔者在构建时包括构">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shilq.top/img/20250217210302.png">
+<meta property="article:published_time" content="2025-02-17T12:20:00.000Z">
+<meta property="article:modified_time" content="2025-02-17T13:05:38.220Z">
+<meta property="article:author" content="Rational">
+<meta property="article:tag" content="博客，兔子">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://shilq.top/img/20250217210302.png"><link rel="shortcut icon" href="/./img/favicon.png"><link rel="canonical" href="https://shilq.top/posts/30563"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":230},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Dockerfile构建AIGC应用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-02-17 21:05:38'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/universe.css"><link rel="stylesheet" href="/css/font-awesome-animation.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "/img/loading.gif" data-lazy-src="/./img/avater.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home  faa-bounce animated"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group hide" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 链接</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/echo/"><i class="fa-fw icon-love-sign"></i><span> 📑Echo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/20250217210302.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Rational</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home  faa-bounce animated"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group hide" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 链接</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/echo/"><i class="fa-fw icon-love-sign"></i><span> 📑Echo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Dockerfile构建AIGC应用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon far fa-calendar-alt"></i><span class="post-meta-label">发表于</span><time datetime="2025-02-17T12:20:00.000Z" title="发表于 2025-02-17 20:20:00">2025-02-17</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Docker/">Docker</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Dockerfile构建AIGC应用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>FaceChain是一个可以用来生成个人写真的深度学习模型工具。可实现兼具可控性与ID保持能力的无限风格写真与固定模板写真功能，同时对ControlNet和LoRA具有优秀的兼容能力。FaceChain支持在gradio的界面中使用模型训练和推理能力、支持资深开发者使用python脚本进行训练推理</p>
+<p>本篇使用是facechain：v3.0.0版本，为什么会选择这个镜像呢？？因为笔者在构建时包括构建完成后都会发现该项目出现各种无厘头的原因，真烧心！！想刀人！！   深呼吸…吸气…呼气，好！！</p>
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><p>Dockerfile：通过定义一系列命令和参数, 指导 Docker 构建一个自定义的镜像。</p>
+<p>示例：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> swr.cn-north-<span class="number">4</span>.myhuaweicloud.com/shilq/python3.<span class="number">8.18</span>-pytorch-<span class="number">2.0</span>.<span class="number">0</span>-cuda:<span class="number">11.8</span></span><br><span class="line"><span class="comment">#项目构建的基础镜像包括：系统、miniconda3、python、pytorch、cuda版本、ENTRYPOINT [&quot;/root/entrypoint.sh&quot;]</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ENV</span> PATH=/root/miniconda3/bin:$PATH</span><br><span class="line"><span class="comment">#在容器内部设置环境变量。</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> conda create -n facechain python==3.10</span></span><br><span class="line"><span class="comment">#构建虚拟环境</span></span><br><span class="line"><span class="keyword">SHELL</span><span class="language-bash"> [<span class="string">&quot;conda&quot;</span>, <span class="string">&quot;run&quot;</span>, <span class="string">&quot;-n&quot;</span>, <span class="string">&quot;facechain&quot;</span>, <span class="string">&quot;/bin/bash&quot;</span>, <span class="string">&quot;-c&quot;</span>]</span></span><br><span class="line"><span class="comment">#激活特定环境</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> GIT_LFS_SKIP_SMUDGE=1 git <span class="built_in">clone</span> https://github.com/modelscope/facechain.git -b v3.0.0  --depth 1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install tb-nightly -i https://pypi.python.org/simple</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">cd</span> facechain/;pip install -r requirements.txt</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install  tqdm~=4.65.0;pip3 install -U openmim </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install torch==2.0.1 torchvision==0.15.2;mim install mmcv-full==1.7.2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install SentencePiece</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install opencv-python-headless</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt install -y libgl1-mesa-glx;pip install gradio==3.50.2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">rm</span> -rf /root/miniconda3/envs/facechain/lib/python3.10/site-packages/diffusers/utils/deprecation_utils.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span><span class="language-bash"> ./deprecation_utils.py /root/miniconda3/envs/facechain/lib/python3.10/site-packages/diffusers/utils/</span></span><br><span class="line"><span class="comment">#将文件复制到镜像中</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">7860</span></span><br><span class="line"><span class="comment">#声明容器运行时监听的特定网络端口。</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">echo</span> <span class="string">&quot;source activate facechain&quot;</span> &gt;&gt; ~/.bashrc</span></span><br><span class="line"><span class="comment">#source activate facechain这行添加到你的.bashrc文件中，这样每次启动shell时都会自动激活facechain环境。</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /root/facechain/</span></span><br><span class="line"><span class="comment">#设置后续指令的工作目录。</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get update;apt install ffmpeg -y</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install kornia -U;pip install yacs</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install librosa;pip install face_alignment</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> pip install numpy==1.23.5;pip install imageio==2.19.3  imageio-ffmpeg==0.4.7</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在特定情况下，我们为了增强容器启动的灵活性外挂一个<code>entrypoint.sh</code>。它允许你在容器启动时执行自定义脚本，以进行必要的配置或初始化工作。这种方式可以避免频繁地重建Docker镜像，因为你只需修改脚本内容即可。这样大大提高了部署效率和维护灵活性。</p>
+<p>示例：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">source</span> activate facechain</span><br><span class="line"><span class="built_in">export</span> WELCOME_TITLE=<span class="string">&quot;Welcome to My SerVice&quot;</span></span><br><span class="line">grep <span class="string">&quot;<span class="variable">$WELCOME_TITLE</span>&quot;</span> /root/.bashrc &amp;&gt; /dev/null || <span class="built_in">echo</span> <span class="string">&#x27;echo -e &quot;\033[1;32m&#x27;</span><span class="variable">$&#123;WELCOME_TITLE&#125;</span><span class="string">&#x27;\033[0m&quot;&#x27;</span> &gt;&gt; /root/.bashrc</span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt; /root/miniconda3/share/jupyter/kernels/python3/kernel.json</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string"> &quot;argv&quot;: [</span></span><br><span class="line"><span class="string">  &quot;python&quot;,</span></span><br><span class="line"><span class="string">  &quot;-m&quot;,</span></span><br><span class="line"><span class="string">  &quot;ipykernel_launcher&quot;,</span></span><br><span class="line"><span class="string">  &quot;-f&quot;,</span></span><br><span class="line"><span class="string">  &quot;&#123;connection_file&#125;&quot;</span></span><br><span class="line"><span class="string"> ],</span></span><br><span class="line"><span class="string"> &quot;display_name&quot;: &quot;Python 3 (ipykernel)&quot;,</span></span><br><span class="line"><span class="string"> &quot;language&quot;: &quot;python&quot;,</span></span><br><span class="line"><span class="string"> &quot;metadata&quot;: &#123;</span></span><br><span class="line"><span class="string">  &quot;debugger&quot;: true</span></span><br><span class="line"><span class="string"> &#125;,</span></span><br><span class="line"><span class="string"> &quot;env&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;PATH&quot;: &quot;/root/miniconda3/bin:/root/miniconda3/condabin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin&quot;,</span></span><br><span class="line"><span class="string">        &quot;SHELL&quot;: &quot;/bin/bash&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line">/usr/sbin/sshd -D <span class="variable">$SSHD_OPTS</span> &amp;</span><br><span class="line">/root/miniconda3/bin/jupyter lab &amp;</span><br><span class="line">/usr/bin/code-server --auth none --bind-addr 0.0.0.0:8080  --locale=<span class="string">&quot;zh-cn&quot;</span>&amp;</span><br><span class="line">/root/miniconda3/envs/facechain/bin/python3 /root/facechain/app.py </span><br></pre></td></tr></table></figure>
+
+<p>在dockerfile文件的路径下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#构建镜像</span><br><span class="line">docker build -t swr.cn-north-4.myhuaweicloud.com/shilq/facechain:v3.0.0  .</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#运行（单卡推理）</span><br><span class="line">docker run -d -P -v /root/slq/Dockerfile/entrypoint.sh:/root/entrypoint.sh --gpus &quot;1&quot; swr.cn-north-4.myhuaweicloud.com/shilq/facechain:v3.0.0</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h2 id="灵魂发问"><a href="#灵魂发问" class="headerlink" title="灵魂发问"></a>灵魂发问</h2><p>当然，如果后期不需要的情况下，我们也可以启动容器时通过 –entrypoint参数覆盖掉。例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">docker run -d -P --entrypoint bash --gpus <span class="string">&quot;1&quot;</span> swr.cn-north-4.myhuaweicloud.com/shilq/facechain:v3.0.0 -c <span class="string">&quot;/root/miniconda3/envs/facechain/bin/python3 /root/facechain/app.py&quot;</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">docker run -d -P -e CUDA_VISIBLE_DEVICES=0 --entrypoint bash swr.cn-north-4.myhuaweicloud.com/shilq/facechain:v3.0.0 -c <span class="string">&quot;/root/miniconda3/envs/facechain/bin/python3 /root/facechain/app.py&quot;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这里也是让笔者深感疑惑的地方，针对该项目，本人使用上述命令启动时会出现训练失败的情况。尝试sleep容器后，手动进入，按&#x2F;root&#x2F;miniconda3&#x2F;envs&#x2F;facechain&#x2F;bin&#x2F;python3 &#x2F;root&#x2F;facechain&#x2F;app.py启动训练无异常。这不是活见鬼嘛！！笔者尝试无数次后深感绝望，望有侠义之士答疑解惑，在此叩谢。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://Shilq.top">Rational</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://shilq.top/posts/30563.html">https://shilq.top/posts/30563.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://Shilq.top" target="_blank">Rational</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/20250217210302.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/posts/40186.html"><img class="next-cover" src= "/img/loading.gif" data-lazy-src="/img/202408251720.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Nginx+PHP搭建Couple Station</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "/img/loading.gif" data-lazy-src="/./img/avater.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Rational</div><div class="author-info__description">Hi~</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="mailto:1916575903@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">Welcome to my Blog</div><div class="twopeople"><div class="twopeople"><div class="container"style="height:200px;"><canvas class="illo"width="800"height="800"style="max-width: 200px; max-height: 200px; touch-action: none; width: 640px; height: 640px;"></canvas></div><script src="https://cdn.jsdelivr.net/combine/npm/hexo-beautiful-page@latest/lib/onepeople.min.js,npm/hexo-beautiful-page@latest/lib/zdog.min.js,npm/hexo-beautiful-page@latest/lib/twopeople.min.js"></script><style>.twopeople{margin:0;align-items:center;justify-content:center;text-align:center}.illo{display:block;margin:0 auto;cursor:url("https://cdn.jsdelivr.net/gh/milkdue/cursors@latest/ori/move.cur"), auto !important;}</style></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B"><span class="toc-number">2.</span> <span class="toc-text">开始</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%81%B5%E9%AD%82%E5%8F%91%E9%97%AE"><span class="toc-number">3.</span> <span class="toc-text">灵魂发问</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/30563.html" title="Dockerfile构建AIGC应用"><img src= "/img/loading.gif" data-lazy-src="/img/20250217210302.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Dockerfile构建AIGC应用"/></a><div class="content"><a class="title" href="/posts/30563.html" title="Dockerfile构建AIGC应用">Dockerfile构建AIGC应用</a><time datetime="2025-02-17T12:20:00.000Z" title="发表于 2025-02-17 20:20:00">2025-02-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/40186.html" title="Nginx+PHP搭建Couple Station"><img src= "/img/loading.gif" data-lazy-src="/img/202408251720.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Nginx+PHP搭建Couple Station"/></a><div class="content"><a class="title" href="/posts/40186.html" title="Nginx+PHP搭建Couple Station">Nginx+PHP搭建Couple Station</a><time datetime="2024-08-25T09:20:00.000Z" title="发表于 2024-08-25 17:20:00">2024-08-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/27263.html" title="Pigx 、JeecgBoot微服务部署"><img src= "/img/loading.gif" data-lazy-src="/img/202407011106242.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pigx 、JeecgBoot微服务部署"/></a><div class="content"><a class="title" href="/posts/27263.html" title="Pigx 、JeecgBoot微服务部署">Pigx 、JeecgBoot微服务部署</a><time datetime="2024-07-01T00:37:00.000Z" title="发表于 2024-07-01 08:37:00">2024-07-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/39282.html" title="Nginx配置后台运行"><img src= "/img/loading.gif" data-lazy-src="/img/nginx.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Nginx配置后台运行"/></a><div class="content"><a class="title" href="/posts/39282.html" title="Nginx配置后台运行">Nginx配置后台运行</a><time datetime="2024-01-16T06:37:00.000Z" title="发表于 2024-01-16 14:37:00">2024-01-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/12025.html" title="如何超越大多数人 --陈皓"><img src= "/img/loading.gif" data-lazy-src="https://qzonestyle.gtimg.cn/qzone/qzactStatics/imgs/20171123181522_c48800.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="如何超越大多数人 --陈皓"/></a><div class="content"><a class="title" href="/posts/12025.html" title="如何超越大多数人 --陈皓">如何超越大多数人 --陈皓</a><time datetime="2023-12-22T15:37:00.000Z" title="发表于 2023-12-22 23:37:00">2023-12-22</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://gitee.com/Shilqing/images/raw/master/202407171554183.webp')"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2025  <i id="heartbeat" class="fa fas fa-heartbeat"></i> Rational</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div><link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/HCLonely/images@master/others/heartbeat.min.css"></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><div class="js-pjax"></div><canvas id="universe"></canvas><script defer src="/js/universe.js"></script><script src="js/Rational.js"></script><div class="aplayer no-destroy" data-id="7713407142" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="false"> </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
